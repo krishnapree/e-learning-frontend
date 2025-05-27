@@ -1,6 +1,6 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
+import { useAuth } from '../hooks/useAuth.tsx'
 
 const Home: React.FC = () => {
   const { user } = useAuth()
