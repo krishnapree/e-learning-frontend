@@ -1,0 +1,50 @@
+Build a full-stack AI Tutoring Platform in a monorepo setup with the following requirements:
+
+🧠 Features:
+- Students can ask questions via voice or text
+- AI gives helpful explanations with visuals (charts, code snippets)
+- Adaptive quizzes based on weak areas
+- Subscription system with Stripe
+- Progress tracking and dashboard
+
+📦 Tech Stack:
+- Frontend: React + TypeScript + Vite + Tailwind CSS
+- Backend: FastAPI (Python)
+- Database: PostgreSQL
+- LLM: Gemini Pro via Google AI API
+- Voice input: Transcription with Whisper (open-source or Hugging Face)
+- Payments: Stripe
+- Charts: Recharts in the dashboard
+
+📱 Frontend Pages:
+1. Home Page with intro to platform
+2. Ask Page: user enters voice or text to get answers
+   - Capture voice using MediaRecorder API
+   - Show AI response with optional chart or code snippet
+3. Quiz Page: user takes adaptive quizzes
+4. Dashboard: visualize progress using charts
+5. Subscription Page: display and manage plans
+
+🛠️ Backend API Endpoints:
+- `/ask`: Accepts question text → Sends to Gemini API → Returns response
+- `/voice`: Accepts audio → Transcribes using Whisper → Feeds to `/ask`
+- `/quiz`: Returns personalized quiz based on weak topics
+- `/submit-quiz`: Submits quiz results and updates progress
+- `/dashboard`: Returns performance data
+- `/create-checkout-session`: Stripe session for subscriptions
+- `/webhook`: Stripe webhook for payment status updates
+- `/register`, `/login`: Basic auth using email & password
+
+🗄️ Database Schema:
+- `users`: id, name, email, password_hash, subscription_status
+- `questions`: id, topic, question_text, correct_answer, options[]
+- `quiz_attempts`: id, user_id, question_id, is_correct, timestamp
+- `subscriptions`: user_id, stripe_customer_id, active_status
+
+⚙️ Other:
+- Environment variables: GEMINI_API_KEY, DB credentials, Stripe keys
+- Integrate Google AI’s Gemini Pro model using `google.generativeai` Python SDK
+- Setup frontend and backend in the same Replit project (monorepo)
+- Use `vite` for frontend dev server and `uvicorn` for FastAPI
+- Seed the DB with mock users and sample questions
+- Ensure CORS is handled for local dev
