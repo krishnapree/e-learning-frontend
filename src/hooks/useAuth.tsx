@@ -4,7 +4,7 @@ import { apiClient } from '../api/client'
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
-export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
@@ -15,9 +15,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const checkAuth = async () => {
     try {
       const userData = await apiClient.getCurrentUser()
-      setUser(userData.user)
+      setUser((userData as any).user)
     } catch (error) {
-      // User not authenticated
       setUser(null)
     } finally {
       setLoading(false)
@@ -27,7 +26,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const login = async (email: string, password: string) => {
     try {
       const response = await apiClient.login(email, password)
-      setUser(response.user)
+      setUser((response as any).user)
     } catch (error) {
       throw error
     }
@@ -36,7 +35,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
   const register = async (name: string, email: string, password: string) => {
     try {
       const response = await apiClient.register(name, email, password)
-      setUser(response.user)
+      setUser((response as any).user)
     } catch (error) {
       throw error
     }
@@ -47,12 +46,11 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
       await apiClient.logout()
       setUser(null)
     } catch (error) {
-      // Force logout even if API call fails
       setUser(null)
     }
   }
 
-  const value = {
+  const value: AuthContextType = {
     user,
     loading,
     login,

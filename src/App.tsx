@@ -8,7 +8,7 @@ import Dashboard from './pages/Dashboard'
 import Subscription from './pages/Subscription'
 import Login from './pages/Login'
 import Register from './pages/Register'
-import { useAuth } from './hooks/useAuth'
+import { useAuth } from './hooks/useAuth.tsx'
 
 function App() {
   const { user, loading } = useAuth()
