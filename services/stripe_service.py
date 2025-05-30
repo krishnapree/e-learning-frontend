@@ -1,21 +1,23 @@
 import os
 import stripe
-from typing import Dict, List, Optional
+from typing import List, Dict, Any
 from sqlalchemy.orm import Session
-from datetime import datetime
-
 from models import User, Subscription
+from datetime import datetime
 
 class StripeService:
     def __init__(self):
-        self.api_key = os.getenv("STRIPE_SECRET_KEY", "sk_test_default_key")
+        api_key = os.getenv("STRIPE_API_KEY")
+        if not api_key:
+            raise ValueError("STRIPE_API_KEY environment variable is not set")
+        self.api_key = api_key
         self.webhook_secret = os.getenv("STRIPE_WEBHOOK_SECRET", "whsec_default_secret")
         self.success_url = os.getenv("FRONTEND_URL", "http://localhost:5000") + "/subscription?success=true"
         self.cancel_url = os.getenv("FRONTEND_URL", "http://localhost:5000") + "/subscription?canceled=true"
-        
+
         stripe.api_key = self.api_key
-    
-    def get_subscription_plans(self) -> List[Dict]:
+
+    def get_subscription_plans(self) -> List[Dict[str, Any]]:
         """
         Get available subscription plans.
         In a real implementation, these would be fetched from Stripe.
@@ -65,7 +67,7 @@ class StripeService:
                 ]
             }
         ]
-    
+
     async def create_checkout_session(self, customer_email: str, plan_id: str) -> str:
         """
         Create a Stripe checkout session for subscription.
@@ -73,13 +75,13 @@ class StripeService:
         try:
             plans = self.get_subscription_plans()
             plan = next((p for p in plans if p["id"] == plan_id), None)
-            
+
             if not plan or plan_id == "free":
                 raise ValueError("Invalid plan selected")
-            
+
             # Create or get customer
             customer = await self._get_or_create_customer(customer_email)
-            
+
             session = stripe.checkout.Session.create(
                 customer=customer.id,
                 payment_method_types=['card'],
@@ -97,12 +99,12 @@ class StripeService:
                     'customer_email': customer_email
                 }
             )
-            
+
             return session.url
-            
+
         except Exception as e:
             raise Exception(f"Failed to create checkout session: {str(e)}")
-    
+
     async def create_customer_portal_session(self, customer_id: str) -> str:
         """
         Create a customer portal session for subscription management.
@@ -112,12 +114,12 @@ class StripeService:
                 customer=customer_id,
                 return_url=os.getenv("FRONTEND_URL", "http://localhost:5000") + "/subscription"
             )
-            
+
             return session.url
-            
+
         except Exception as e:
             raise Exception(f"Failed to create portal session: {str(e)}")
-    
+
     async def _get_or_create_customer(self, email: str):
         """
         Get existing Stripe customer or create a new one.
@@ -125,16 +127,16 @@ class StripeService:
         try:
             # Try to find existing customer
             customers = stripe.Customer.list(email=email, limit=1)
-            
+
             if customers.data:
                 return customers.data[0]
             else:
                 # Create new customer
                 return stripe.Customer.create(email=email)
-                
+
         except Exception as e:
             raise Exception(f"Failed to handle customer: {str(e)}")
-    
+
     def verify_webhook(self, payload: bytes, sig_header: str):
         """
         Verify Stripe webhook signature and return event.
@@ -148,13 +150,13 @@ class StripeService:
             raise Exception(f"Invalid payload: {str(e)}")
         except stripe.error.SignatureVerificationError as e:
             raise Exception(f"Invalid signature: {str(e)}")
-    
-    def handle_webhook_event(self, db: Session, event: Dict):
+
+    def handle_webhook_event(self, db: Session, event: Dict[str, Any]) -> None:
         """
         Handle Stripe webhook events.
         """
         event_type = event['type']
-        
+
         if event_type == 'checkout.session.completed':
             self._handle_checkout_completed(db, event['data']['object'])
         elif event_type == 'invoice.payment_succeeded':
@@ -163,8 +165,8 @@ class StripeService:
             self._handle_subscription_updated(db, event['data']['object'])
         elif event_type == 'customer.subscription.deleted':
             self._handle_subscription_deleted(db, event['data']['object'])
-    
-    def _handle_checkout_completed(self, db: Session, session):
+
+    def _handle_checkout_completed(self, db: Session, session: Dict[str, Any]) -> None:
         """
         Handle completed checkout session.
         """
@@ -172,15 +174,15 @@ class StripeService:
             customer_email = session.get('customer_details', {}).get('email') or session.get('metadata', {}).get('customer_email')
             customer_id = session['customer']
             subscription_id = session['subscription']
-            
+
             # Find user by email
             user = db.query(User).filter(User.email == customer_email).first()
             if not user:
                 return
-            
+
             # Create or update subscription record
             subscription = db.query(Subscription).filter(Subscription.user_id == user.id).first()
-            
+
             if not subscription:
                 subscription = Subscription(
                     user_id=user.id,
@@ -191,20 +193,20 @@ class StripeService:
                 )
                 db.add(subscription)
             else:
-                subscription.stripe_customer_id = customer_id
-                subscription.stripe_subscription_id = subscription_id
-                subscription.active_status = True
-                subscription.status = 'active'
-            
+                subscription.stripe_customer_id = customer_id  # type: ignore
+                subscription.stripe_subscription_id = subscription_id  # type: ignore
+                subscription.active_status = True  # type: ignore
+                subscription.status = 'active'  # type: ignore
+
             # Update user subscription status
-            user.subscription_status = 'pro'  # Default to pro for paid subscriptions
-            
+            user.subscription_status = 'pro'  # type: ignore
+
             db.commit()
-            
+
         except Exception as e:
             print(f"Error handling checkout completion: {e}")
             db.rollback()
-    
+
     def _handle_payment_succeeded(self, db: Session, invoice):
         """
         Handle successful payment.
@@ -212,25 +214,25 @@ class StripeService:
         try:
             customer_id = invoice['customer']
             subscription_id = invoice['subscription']
-            
+
             subscription = db.query(Subscription).filter(
                 Subscription.stripe_customer_id == customer_id
             ).first()
-            
+
             if subscription:
-                subscription.active_status = True
-                subscription.status = 'active'
-                
+                subscription.active_status = True  # type: ignore
+                subscription.status = 'active'  # type: ignore
+
                 # Update billing dates
-                if invoice.get('period_end'):
-                    subscription.next_billing_date = datetime.fromtimestamp(invoice['period_end'])
-                
+                if invoice.get('period_end'):  # type: ignore
+                    subscription.next_billing_date = datetime.fromtimestamp(invoice['period_end'])  # type: ignore
+
                 db.commit()
-                
+
         except Exception as e:
             print(f"Error handling payment success: {e}")
             db.rollback()
-    
+
     def _handle_subscription_updated(self, db: Session, stripe_subscription):
         """
         Handle subscription updates.
@@ -238,49 +240,50 @@ class StripeService:
         try:
             customer_id = stripe_subscription['customer']
             status = stripe_subscription['status']
-            
+
             subscription = db.query(Subscription).filter(
                 Subscription.stripe_customer_id == customer_id
             ).first()
-            
+
             if subscription:
                 subscription.status = status
                 subscription.active_status = status == 'active'
-                
+
                 # Update user subscription status
                 if subscription.user:
                     if status == 'active':
                         subscription.user.subscription_status = subscription.plan_name or 'pro'
                     else:
                         subscription.user.subscription_status = 'free'
-                
+
                 db.commit()
-                
+
         except Exception as e:
             print(f"Error handling subscription update: {e}")
             db.rollback()
-    
+
     def _handle_subscription_deleted(self, db: Session, stripe_subscription):
         """
         Handle subscription cancellation.
         """
         try:
             customer_id = stripe_subscription['customer']
-            
+
             subscription = db.query(Subscription).filter(
                 Subscription.stripe_customer_id == customer_id
             ).first()
-            
+
             if subscription:
-                subscription.active_status = False
-                subscription.status = 'canceled'
-                
+                subscription.active_status = False  # type: ignore
+                subscription.status = 'canceled'  # type: ignore
+
                 # Update user subscription status
                 if subscription.user:
-                    subscription.user.subscription_status = 'free'
-                
+                    subscription.user.subscription_status = 'free'  # type: ignore
+
                 db.commit()
-                
+
         except Exception as e:
             print(f"Error handling subscription deletion: {e}")
             db.rollback()
+
