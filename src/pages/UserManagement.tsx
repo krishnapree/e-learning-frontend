@@ -14,7 +14,7 @@ interface User {
 }
 
 const UserManagement: React.FC = () => {
-  const { user } = useAuth();
+  const {} = useAuth();
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

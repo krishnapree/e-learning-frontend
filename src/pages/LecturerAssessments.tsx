@@ -6,8 +6,8 @@ import {
   Trash2,
   Users,
   Clock,
-  CheckCircle,
-  AlertCircle,
+  // CheckCircle,
+  // AlertCircle,
   FileText,
   Award,
   Calendar,
@@ -69,11 +69,9 @@ const LecturerAssessments: React.FC = () => {
   const [selectedCourse, setSelectedCourse] = useState<number | null>(null);
   const [showQuizModal, setShowQuizModal] = useState(false);
   const [showAssignmentModal, setShowAssignmentModal] = useState(false);
-  const [showQuizDesigner, setShowQuizDesigner] = useState(false);
-  const [editingQuiz, setEditingQuiz] = useState<Quiz | null>(null);
-  const [editingAssignment, setEditingAssignment] = useState<Assignment | null>(
-    null
-  );
+  const [,] = useState(false);
+  const [,] = useState<Quiz | null>(null);
+  const [,] = useState<Assignment | null>(null);
   const [loading, setLoading] = useState(true);
 
   // Quiz form state
@@ -99,7 +97,7 @@ const LecturerAssessments: React.FC = () => {
   });
 
   // Quiz questions state
-  const [quizQuestions, setQuizQuestions] = useState<QuizQuestion[]>([]);
+  const [,] = useState<QuizQuestion[]>([]);
 
   useEffect(() => {
     fetchCourses();
@@ -164,7 +162,7 @@ const LecturerAssessments: React.FC = () => {
       });
 
       if (response.ok) {
-        const data = await response.json();
+        await response.json();
         setShowQuizModal(false);
         setQuizForm({
           title: "",
@@ -177,8 +175,8 @@ const LecturerAssessments: React.FC = () => {
         fetchQuizzes();
 
         // Open quiz designer for the new quiz
-        setEditingQuiz(data.quiz);
-        setShowQuizDesigner(true);
+        // setEditingQuiz(data.quiz);
+        // setShowQuizDesigner(true);
       }
     } catch (error) {
       console.error("Error creating quiz:", error);
@@ -216,52 +214,52 @@ const LecturerAssessments: React.FC = () => {
     }
   };
 
-  const addQuizQuestion = () => {
-    setQuizQuestions([
-      ...quizQuestions,
-      {
-        question_text: "",
-        question_type: "multiple_choice",
-        options: ["", "", "", ""],
-        correct_answer: "",
-        points: 1,
-      },
-    ]);
-  };
+  // const addQuizQuestion = () => {
+  //   setQuizQuestions([
+  //     ...quizQuestions,
+  //     {
+  //       question_text: "",
+  //       question_type: "multiple_choice",
+  //       options: ["", "", "", ""],
+  //       correct_answer: "",
+  //       points: 1,
+  //     },
+  //   ]);
+  // };
 
-  const updateQuizQuestion = (index: number, field: string, value: any) => {
-    const updated = [...quizQuestions];
-    updated[index] = { ...updated[index], [field]: value };
-    setQuizQuestions(updated);
-  };
+  // const updateQuizQuestion = (index: number, field: string, value: any) => {
+  //   const updated = [...quizQuestions];
+  //   updated[index] = { ...updated[index], [field]: value };
+  //   setQuizQuestions(updated);
+  // };
 
-  const removeQuizQuestion = (index: number) => {
-    setQuizQuestions(quizQuestions.filter((_, i) => i !== index));
-  };
+  // const removeQuizQuestion = (index: number) => {
+  //   setQuizQuestions(quizQuestions.filter((_, i) => i !== index));
+  // };
 
-  const saveQuizQuestions = async () => {
-    if (!editingQuiz) return;
+  // const saveQuizQuestions = async () => {
+  //   if (!editingQuiz) return;
 
-    try {
-      const response = await fetch(`/api/quizzes/${editingQuiz.id}/questions`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ questions: quizQuestions }),
-      });
+  //   try {
+  //     const response = await fetch(`/api/quizzes/${editingQuiz.id}/questions`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include",
+  //       body: JSON.stringify({ questions: quizQuestions }),
+  //     });
 
-      if (response.ok) {
-        setShowQuizDesigner(false);
-        setEditingQuiz(null);
-        setQuizQuestions([]);
-        fetchQuizzes();
-      }
-    } catch (error) {
-      console.error("Error saving quiz questions:", error);
-    }
-  };
+  //     if (response.ok) {
+  //       setShowQuizDesigner(false);
+  //       setEditingQuiz(null);
+  //       setQuizQuestions([]);
+  //       fetchQuizzes();
+  //     }
+  //   } catch (error) {
+  //     console.error("Error saving quiz questions:", error);
+  //   }
+  // };
 
   const filteredQuizzes = selectedCourse
     ? quizzes.filter((quiz) => quiz.course_id === selectedCourse)
@@ -380,8 +378,8 @@ const LecturerAssessments: React.FC = () => {
                     <div className="flex space-x-2">
                       <button
                         onClick={() => {
-                          setEditingQuiz(quiz);
-                          setShowQuizDesigner(true);
+                          // setEditingQuiz(quiz);
+                          // setShowQuizDesigner(true);
                         }}
                         className="text-blue-600 hover:text-blue-800"
                       >

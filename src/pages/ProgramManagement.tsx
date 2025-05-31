@@ -17,7 +17,7 @@ interface Program {
 }
 
 const ProgramManagement: React.FC = () => {
-  const { user } = useAuth();
+  const {} = useAuth();
   const [programs, setPrograms] = useState<Program[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -82,6 +82,8 @@ const ProgramManagement: React.FC = () => {
             department_name: "Computer Science",
             duration_years: 4,
             total_credits: 120,
+            total_courses: 45,
+            enrolled_students: 120,
             is_active: true,
             created_at: new Date().toISOString(),
           },
@@ -94,6 +96,8 @@ const ProgramManagement: React.FC = () => {
             department_name: "Business",
             duration_years: 2,
             total_credits: 60,
+            total_courses: 20,
+            enrolled_students: 85,
             is_active: true,
             created_at: new Date().toISOString(),
           },
@@ -106,6 +110,8 @@ const ProgramManagement: React.FC = () => {
             department_name: "Engineering",
             duration_years: 4,
             total_credits: 128,
+            total_courses: 50,
+            enrolled_students: 95,
             is_active: true,
             created_at: new Date().toISOString(),
           },

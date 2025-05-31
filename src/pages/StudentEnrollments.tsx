@@ -1,51 +1,51 @@
-import React, { useState, useEffect } from 'react'
-import { useAuth } from '../hooks/useAuth'
+import React, { useState, useEffect } from "react";
+import { useAuth } from "../hooks/useAuth";
 
 interface Enrollment {
-  id: number
-  course_id: number
-  course_name: string
-  course_code: string
-  course_description: string
-  lecturer_name: string
-  credits: number
-  semester_name: string
-  status: string
-  enrollment_date: string
-  final_grade?: string
-  grade_points?: number
+  id: number;
+  course_id: number;
+  course_name: string;
+  course_code: string;
+  course_description: string;
+  lecturer_name: string;
+  credits: number;
+  semester_name: string;
+  status: string;
+  enrollment_date: string;
+  final_grade?: string;
+  grade_points?: number;
 }
 
 const StudentEnrollments: React.FC = () => {
-  const { user } = useAuth()
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
+  const {} = useAuth();
+  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetchEnrollments()
-  }, [])
+    fetchEnrollments();
+  }, []);
 
   const fetchEnrollments = async () => {
     try {
-      setLoading(true)
-      const response = await fetch('/api/student/enrollments', {
-        credentials: 'include'
-      })
-      
+      setLoading(true);
+      const response = await fetch("/api/student/enrollments", {
+        credentials: "include",
+      });
+
       if (response.ok) {
-        const data = await response.json()
-        setEnrollments(data.enrollments || [])
+        const data = await response.json();
+        setEnrollments(data.enrollments || []);
       } else {
-        setError('Failed to fetch enrollments')
+        setError("Failed to fetch enrollments");
       }
     } catch (error) {
-      console.error('Error fetching enrollments:', error)
-      setError('Failed to fetch enrollments')
+      console.error("Error fetching enrollments:", error);
+      setError("Failed to fetch enrollments");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
   if (loading) {
     return (
@@ -55,7 +55,7 @@ const StudentEnrollments: React.FC = () => {
           <p className="mt-4 text-gray-600">Loading enrollments...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
@@ -89,8 +89,12 @@ const StudentEnrollments: React.FC = () => {
             <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <i className="fas fa-graduation-cap text-gray-400 text-3xl"></i>
             </div>
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No Enrollments</h3>
-            <p className="text-gray-600 mb-6">You haven't enrolled in any courses yet.</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              No Enrollments
+            </h3>
+            <p className="text-gray-600 mb-6">
+              You haven't enrolled in any courses yet.
+            </p>
             <a
               href="/courses"
               className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
@@ -102,30 +106,39 @@ const StudentEnrollments: React.FC = () => {
         ) : (
           <div className="grid gap-6">
             {enrollments.map((enrollment) => (
-              <div key={enrollment.id} className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+              <div
+                key={enrollment.id}
+                className="bg-white rounded-lg shadow-sm border border-gray-200 p-6"
+              >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-2">
                       <h3 className="text-lg font-semibold text-gray-900">
                         {enrollment.course_code}: {enrollment.course_name}
                       </h3>
-                      <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        enrollment.status === 'enrolled' 
-                          ? 'bg-green-100 text-green-800'
-                          : enrollment.status === 'completed'
-                          ? 'bg-blue-100 text-blue-800'
-                          : 'bg-gray-100 text-gray-800'
-                      }`}>
+                      <span
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                          enrollment.status === "enrolled"
+                            ? "bg-green-100 text-green-800"
+                            : enrollment.status === "completed"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-gray-100 text-gray-800"
+                        }`}
+                      >
                         {enrollment.status}
                       </span>
                     </div>
-                    
-                    <p className="text-gray-600 mb-3">{enrollment.course_description}</p>
-                    
+
+                    <p className="text-gray-600 mb-3">
+                      {enrollment.course_description}
+                    </p>
+
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <span className="text-gray-500">Lecturer:</span>
-                        <p className="font-medium">{enrollment.lecturer_name}</p>
+                        <p className="font-medium">
+                          {enrollment.lecturer_name}
+                        </p>
                       </div>
                       <div>
                         <span className="text-gray-500">Credits:</span>
@@ -133,12 +146,16 @@ const StudentEnrollments: React.FC = () => {
                       </div>
                       <div>
                         <span className="text-gray-500">Semester:</span>
-                        <p className="font-medium">{enrollment.semester_name}</p>
+                        <p className="font-medium">
+                          {enrollment.semester_name}
+                        </p>
                       </div>
                       <div>
                         <span className="text-gray-500">Enrolled:</span>
                         <p className="font-medium">
-                          {new Date(enrollment.enrollment_date).toLocaleDateString()}
+                          {new Date(
+                            enrollment.enrollment_date
+                          ).toLocaleDateString()}
                         </p>
                       </div>
                     </div>
@@ -146,7 +163,9 @@ const StudentEnrollments: React.FC = () => {
                     {enrollment.final_grade && (
                       <div className="mt-4 p-3 bg-gray-50 rounded-lg">
                         <div className="flex items-center justify-between">
-                          <span className="text-sm text-gray-600">Final Grade:</span>
+                          <span className="text-sm text-gray-600">
+                            Final Grade:
+                          </span>
                           <div className="flex items-center space-x-2">
                             <span className="text-lg font-bold text-gray-900">
                               {enrollment.final_grade}
@@ -168,7 +187,7 @@ const StudentEnrollments: React.FC = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default StudentEnrollments
+export default StudentEnrollments;

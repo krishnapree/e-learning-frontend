@@ -33,7 +33,7 @@ interface Submission {
 }
 
 const AssignmentManagement: React.FC = () => {
-  const { user } = useAuth();
+  const {} = useAuth();
   const [loading, setLoading] = useState(true);
   const [assignments, setAssignments] = useState<Assignment[]>([]);
   const [courses, setCourses] = useState<Course[]>([]);

@@ -59,8 +59,10 @@ const UserProfile: React.FC = () => {
   const fetchUserProfile = async () => {
     try {
       console.log("Fetching user profile...");
-      const data = await apiClient.getUserProfile();
-      console.log("User profile data:", data);
+      const response = await apiClient.getUserProfile();
+      console.log("User profile data:", response);
+      // Type assertion since we know the structure from the API
+      const data = response as UserProfileData;
       setProfileData(data);
       setFormData({
         name: data.name || "",
@@ -84,7 +86,9 @@ const UserProfile: React.FC = () => {
     setError(null);
 
     try {
-      const updatedData = await apiClient.updateUserProfile(formData);
+      const response = await apiClient.updateUserProfile(formData);
+      // Type assertion since we know the structure from the API
+      const updatedData = response as UserProfileData;
       setProfileData(updatedData);
       setIsEditing(false);
       setSuccessMessage("Profile updated successfully!");

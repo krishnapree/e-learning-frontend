@@ -37,7 +37,7 @@ interface Lesson {
 }
 
 const LecturerCourseManagement: React.FC = () => {
-  const { user } = useAuth();
+  const { } = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [materials, setMaterials] = useState<Material[]>([]);

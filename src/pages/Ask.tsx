@@ -16,7 +16,7 @@ const Ask: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [inputMode, setInputMode] = useState<"text" | "voice" | "pdf">("text");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [pdfSummary, setPdfSummary] = useState<string>("");
+  const [, setPdfSummary] = useState<string>("");
   const [chatSessionId, setChatSessionId] = useState<number | null>(null);
   const [chatHistory, setChatHistory] = useState<
     Array<{ type: "user" | "ai"; content: string }>

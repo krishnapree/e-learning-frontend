@@ -23,7 +23,7 @@ interface DepartmentForm {
 }
 
 const DepartmentManagement: React.FC = () => {
-  const { user } = useAuth();
+  const { } = useAuth();
   const [departments, setDepartments] = useState<Department[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

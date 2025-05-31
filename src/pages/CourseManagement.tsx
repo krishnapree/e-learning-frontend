@@ -30,13 +30,13 @@ interface Semester {
 }
 
 const CourseManagement: React.FC = () => {
-  const { user } = useAuth();
+  const {} = useAuth();
   const [courses, setCourses] = useState<Course[]>([]);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [semesters, setSemesters] = useState<Semester[]>([]);
   const [loading, setLoading] = useState(true);
   const [showCreateModal, setShowCreateModal] = useState(false);
-  const [editingCourse, setEditingCourse] = useState<Course | null>(null);
+  const [, setEditingCourse] = useState<Course | null>(null);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [filters, setFilters] = useState({
@@ -143,28 +143,28 @@ const CourseManagement: React.FC = () => {
     }
   };
 
-  const handleUpdateCourse = async (
-    courseId: number,
-    updates: Partial<Course>
-  ) => {
-    try {
-      const response = await fetch(`/api/courses/${courseId}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify(updates),
-      });
+  // const handleUpdateCourse = async (
+  //   courseId: number,
+  //   updates: Partial<Course>
+  // ) => {
+  //   try {
+  //     const response = await fetch(`/api/courses/${courseId}`, {
+  //       method: "PUT",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include",
+  //       body: JSON.stringify(updates),
+  //     });
 
-      if (response.ok) {
-        setEditingCourse(null);
-        fetchData();
-      }
-    } catch (error) {
-      console.error("Failed to update course:", error);
-    }
-  };
+  //     if (response.ok) {
+  //       setEditingCourse(null);
+  //       fetchData();
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to update course:", error);
+  //   }
+  // };
 
   const handleDeleteCourse = async (courseId: number) => {
     if (!confirm("Are you sure you want to delete this course?")) return;

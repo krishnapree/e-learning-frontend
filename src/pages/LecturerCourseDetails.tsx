@@ -65,7 +65,7 @@ interface Submission {
 }
 
 const LecturerCourseDetails: React.FC = () => {
-  const { user } = useAuth();
+  const {} = useAuth();
   const { courseId } = useParams<{ courseId: string }>();
   const [course, setCourse] = useState<Course | null>(null);
   const [activeTab, setActiveTab] = useState<
@@ -85,14 +85,13 @@ const LecturerCourseDetails: React.FC = () => {
   const [submissions, setSubmissions] = useState<Submission[]>([]);
 
   // Modals
-  const [showCreateAssignment, setShowCreateAssignment] = useState(false);
-  const [showUploadMaterial, setShowUploadMaterial] = useState(false);
-  const [showGradeSubmission, setShowGradeSubmission] = useState(false);
-  const [selectedSubmission, setSelectedSubmission] =
-    useState<Submission | null>(null);
+  const [, setShowCreateAssignment] = useState(false);
+  const [, setShowUploadMaterial] = useState(false);
+  const [,] = useState(false);
+  const [,] = useState<Submission | null>(null);
 
   // Forms
-  const [newAssignment, setNewAssignment] = useState({
+  const [,] = useState({
     title: "",
     description: "",
     due_date: "",
@@ -101,7 +100,7 @@ const LecturerCourseDetails: React.FC = () => {
     instructions: "",
   });
 
-  const [gradeForm, setGradeForm] = useState({
+  const [,] = useState({
     grade: "",
     feedback: "",
   });
@@ -198,65 +197,65 @@ const LecturerCourseDetails: React.FC = () => {
     }
   };
 
-  const handleCreateAssignment = async (e: React.FormEvent) => {
-    e.preventDefault();
-    try {
-      const response = await fetch("/api/assignments", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          ...newAssignment,
-          course_id: course?.id,
-        }),
-      });
+  // const handleCreateAssignment = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   try {
+  //     const response = await fetch("/api/assignments", {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       credentials: "include",
+  //       body: JSON.stringify({
+  //         ...newAssignment,
+  //         course_id: course?.id,
+  //       }),
+  //     });
 
-      if (response.ok) {
-        setShowCreateAssignment(false);
-        setNewAssignment({
-          title: "",
-          description: "",
-          due_date: "",
-          max_points: 100,
-          assignment_type: "homework",
-          instructions: "",
-        });
-        fetchTabData();
-      }
-    } catch (error) {
-      console.error("Failed to create assignment:", error);
-    }
-  };
+  //     if (response.ok) {
+  //       setShowCreateAssignment(false);
+  //       setNewAssignment({
+  //         title: "",
+  //         description: "",
+  //         due_date: "",
+  //         max_points: 100,
+  //         assignment_type: "homework",
+  //         instructions: "",
+  //       });
+  //       fetchTabData();
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to create assignment:", error);
+  //   }
+  // };
 
-  const handleGradeSubmission = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!selectedSubmission) return;
+  // const handleGradeSubmission = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!selectedSubmission) return;
 
-    try {
-      const response = await fetch(
-        `/api/submissions/${selectedSubmission.id}/grade`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          credentials: "include",
-          body: JSON.stringify(gradeForm),
-        }
-      );
+  //   try {
+  //     const response = await fetch(
+  //       `/api/submissions/${selectedSubmission.id}/grade`,
+  //       {
+  //         method: "PUT",
+  //         headers: {
+  //           "Content-Type": "application/json",
+  //         },
+  //         credentials: "include",
+  //         body: JSON.stringify(gradeForm),
+  //       }
+  //     );
 
-      if (response.ok) {
-        setShowGradeSubmission(false);
-        setSelectedSubmission(null);
-        setGradeForm({ grade: "", feedback: "" });
-        fetchTabData();
-      }
-    } catch (error) {
-      console.error("Failed to grade submission:", error);
-    }
-  };
+  //     if (response.ok) {
+  //       setShowGradeSubmission(false);
+  //       setSelectedSubmission(null);
+  //       setGradeForm({ grade: "", feedback: "" });
+  //       fetchTabData();
+  //     }
+  //   } catch (error) {
+  //     console.error("Failed to grade submission:", error);
+  //   }
+  // };
 
   const getTabIcon = (tab: string) => {
     switch (tab) {

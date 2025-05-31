@@ -34,7 +34,7 @@ interface Event {
 }
 
 const CampusCoordination: React.FC = () => {
-  const { user } = useAuth();
+  const {} = useAuth();
   const [announcements, setAnnouncements] = useState<Announcement[]>([]);
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
@@ -53,7 +53,7 @@ const CampusCoordination: React.FC = () => {
     title: "",
     content: "",
     type: "general" as const,
-    priority: "medium" as const,
+    priority: "medium" as "low" | "medium" | "high",
     target_audience: [] as string[],
     event_date: "",
     event_location: "",
