@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import VoiceRecorder from "../components/VoiceRecorder";
+import { apiClient } from "../api/client";
 
 interface AIResponse {
   text: string;
@@ -16,7 +17,7 @@ const Ask: React.FC = () => {
   const [loading, setLoading] = useState(false);
   const [inputMode, setInputMode] = useState<"text" | "voice" | "pdf">("text");
   const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [, setPdfSummary] = useState<string>("");
+  const [pdfSummary, setPdfSummary] = useState<string>("");
   const [chatSessionId, setChatSessionId] = useState<number | null>(null);
   const [chatHistory, setChatHistory] = useState<
     Array<{ type: "user" | "ai"; content: string }>
@@ -29,20 +30,7 @@ const Ask: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({ question }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to get response");
-      }
-
-      const data = await res.json();
+      const data = await apiClient.askQuestion(question);
       setResponse(data);
     } catch (error) {
       console.error("Error:", error);
@@ -63,7 +51,9 @@ const Ask: React.FC = () => {
       const formData = new FormData();
       formData.append("file", file);
 
-      const res = await fetch("/api/upload-pdf", {
+      // Using direct fetch for PDF upload since it's not in API client yet
+      // You should add this method to the API client later
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload-pdf`, {
         method: "POST",
         credentials: "include",
         body: formData,
@@ -99,7 +89,9 @@ const Ask: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/chat-pdf", {
+      // Using direct fetch for PDF chat since it's not in API client yet
+      // You should add this method to the API client later
+      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chat-pdf`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -541,16 +533,4 @@ const Ask: React.FC = () => {
                   onClick={() => setQuestion(example)}
                   className="text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <i className="fas fa-lightbulb text-warning-500 mr-2"></i>
-                  {example}
-                </button>
-              ))}
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
-
-export default Ask;
+                  <i className="fas fa-lightbulb text-warning-50
