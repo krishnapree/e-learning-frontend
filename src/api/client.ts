@@ -129,9 +129,49 @@ class APIClient {
     });
   }
 
-  // Quiz
+  // PDF Operations
+  async uploadPdf(file: File) {
+    const formData = new FormData();
+    formData.append("file", file);
+
+    return this.request("/upload-pdf", {
+      method: "POST",
+      body: formData,
+      headers: {}, // Let browser set Content-Type for FormData
+    });
+  }
+
+  async chatWithPdf(chatSessionId: number, message: string) {
+    return this.request("/chat-pdf", {
+      method: "POST",
+      body: JSON.stringify({
+        chat_session_id: chatSessionId,
+        message: message,
+      }),
+    });
+  }
+
+  // Quiz Operations
   async getQuiz() {
     return this.request("/quiz");
+  }
+
+  async getQuizWithParams(difficulty?: string, chatSessionId?: number) {
+    let url = "/quiz";
+    const params = new URLSearchParams();
+    
+    if (chatSessionId) {
+      params.append("chat_session_id", chatSessionId.toString());
+    }
+    if (difficulty) {
+      params.append("difficulty", difficulty);
+    }
+    
+    if (params.toString()) {
+      url += "?" + params.toString();
+    }
+    
+    return this.request(url);
   }
 
   async submitQuiz(answers: Array<{ questionId: number; isCorrect: boolean }>) {
