@@ -48,22 +48,7 @@ const Ask: React.FC = () => {
   const handlePdfUpload = async (file: File) => {
     setUploadingPdf(true);
     try {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      // Using direct fetch for PDF upload since it's not in API client yet
-      // You should add this method to the API client later
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/upload-pdf`, {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to upload PDF");
-      }
-
-      const data = await res.json();
+      const data = await apiClient.uploadPdf(file);
       setPdfFile(file);
       setPdfSummary(data.summary);
       setChatSessionId(data.chat_session_id);
@@ -89,25 +74,7 @@ const Ask: React.FC = () => {
 
     setLoading(true);
     try {
-      // Using direct fetch for PDF chat since it's not in API client yet
-      // You should add this method to the API client later
-      const res = await fetch(`${import.meta.env.VITE_API_URL}/api/chat-pdf`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        credentials: "include",
-        body: JSON.stringify({
-          chat_session_id: chatSessionId,
-          message: question,
-        }),
-      });
-
-      if (!res.ok) {
-        throw new Error("Failed to get response");
-      }
-
-      const data = await res.json();
+      const data = await apiClient.chatWithPdf(chatSessionId, question);
 
       // Add user message and AI response to chat history
       setChatHistory((prev) => [
@@ -533,4 +500,16 @@ const Ask: React.FC = () => {
                   onClick={() => setQuestion(example)}
                   className="text-left p-3 border border-gray-200 rounded-lg hover:bg-gray-50 transition-colors"
                 >
-                  <i className="fas fa-lightbulb text-warning-50
+                  <i className="fas fa-lightbulb text-warning-500 mr-2"></i>
+                  {example}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default Ask;
