@@ -1,3 +1,8 @@
+// src/pages/Ask.tsx
+// -----------------
+// Revised Ask component with all JSX tags closed properly.
+// React + TypeScript + Vite (import.meta.env.VITE_API_URL) integration assumed.
+
 import React, { useState } from "react";
 import VoiceRecorder from "../components/VoiceRecorder";
 import { apiClient } from "../api/client";
@@ -24,6 +29,7 @@ const Ask: React.FC = () => {
   >([]);
   const [uploadingPdf, setUploadingPdf] = useState(false);
 
+  // Handle text‐based question submissions
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim()) return;
@@ -40,11 +46,13 @@ const Ask: React.FC = () => {
     }
   };
 
+  // Receive transcribed text from the VoiceRecorder
   const handleVoiceTranscription = (text: string) => {
     setQuestion(text);
     setInputMode("text");
   };
 
+  // Handle PDF uploads: send file to backend and initialize chat
   const handlePdfUpload = async (file: File) => {
     setUploadingPdf(true);
     try {
@@ -58,7 +66,6 @@ const Ask: React.FC = () => {
           content: `I've analyzed your PDF "${data.filename}". Here's a summary:\n\n${data.summary}`,
         },
       ]);
-
       alert("PDF uploaded and analyzed successfully!");
     } catch (error) {
       console.error("Error uploading PDF:", error);
@@ -68,6 +75,7 @@ const Ask: React.FC = () => {
     }
   };
 
+  // Chat with the PDF: send question along with session ID
   const handlePdfChat = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim() || !chatSessionId) return;
@@ -76,7 +84,7 @@ const Ask: React.FC = () => {
     try {
       const data = await apiClient.chatWithPdf(chatSessionId, question);
 
-      // Add user message and AI response to chat history
+      // Append user message and AI response to chat history
       setChatHistory((prev) => [
         ...prev,
         { type: "user", content: question },
@@ -92,24 +100,24 @@ const Ask: React.FC = () => {
     }
   };
 
+  // Convert AI text (markdown‐style) into HTML fragments
   const formatAIResponse = (text: string): string => {
-    // Convert markdown-style formatting to HTML
     let formatted = text
-      // Convert **bold** to <strong>
+      // **bold**
       .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      // Convert *italic* to <em>
+      // *italic*
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      // Convert numbered lists (1. 2. 3.)
+      // Numbered lists
       .replace(
         /^(\d+)\.\s+(.+)$/gm,
         '<div class="mb-2"><span class="font-semibold text-blue-600">$1.</span> $2</div>'
       )
-      // Convert bullet points (- or *)
+      // Bullet points (- or *)
       .replace(
         /^[-*]\s+(.+)$/gm,
         '<div class="mb-2 ml-4"><span class="text-blue-600 mr-2">•</span>$1</div>'
       )
-      // Convert headings (### or ##)
+      // Headings ### and ##
       .replace(
         /^###\s+(.+)$/gm,
         '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">$1</h3>'
@@ -118,30 +126,31 @@ const Ask: React.FC = () => {
         /^##\s+(.+)$/gm,
         '<h2 class="text-xl font-bold text-gray-900 mt-6 mb-4">$1</h2>'
       )
-      // Convert code blocks ```
+      // Code blocks ```lang
       .replace(
         /```(\w+)?\n([\s\S]*?)```/g,
         '<pre class="bg-gray-100 p-4 rounded-lg mt-4 mb-4 overflow-x-auto"><code class="text-sm">$2</code></pre>'
       )
-      // Convert inline code `code`
+      // Inline code `code`
       .replace(
         /`([^`]+)`/g,
         '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>'
       )
-      // Convert line breaks to proper spacing
+      // Convert double line breaks to paragraphs
       .replace(/\n\n/g, '</p><p class="mb-4">')
-      // Wrap in paragraph tags
+      // Wrap entire string in <p> … </p>
       .replace(/^/, '<p class="mb-4">')
       .replace(/$/, "</p>")
-      // Clean up empty paragraphs
+      // Remove any empty paragraphs
       .replace(/<p class="mb-4"><\/p>/g, "")
-      // Add proper spacing for sections
+      // Ensure spacing around headings
       .replace(/(<h[2-3][^>]*>)/g, '<div class="mt-6">$1')
       .replace(/(<\/h[2-3]>)/g, "$1</div>");
 
     return formatted;
   };
 
+  // Render a code snippet block with syntax highlighting and a copy button
   const renderCodeSnippet = (code: string, language: string = "javascript") => (
     <div className="mt-4">
       <div className="bg-gray-900 rounded-lg overflow-hidden">
@@ -151,8 +160,7 @@ const Ask: React.FC = () => {
             onClick={() => navigator.clipboard.writeText(code)}
             className="text-gray-400 hover:text-white text-sm"
           >
-            <i className="fas fa-copy mr-1"></i>
-            Copy
+            <i className="fas fa-copy mr-1"></i> Copy
           </button>
         </div>
         <pre className="p-4 text-green-400 text-sm overflow-x-auto">
@@ -163,7 +171,8 @@ const Ask: React.FC = () => {
   );
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto p-4">
+      {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Ask AI Tutor</h1>
         <p className="text-gray-600">
@@ -172,11 +181,11 @@ const Ask: React.FC = () => {
         </p>
       </div>
 
-      {/* Input Section */}
-      <div className="card mb-8">
-        <div className="card-header">
+      {/* Input Selector & Form Card */}
+      <div className="card mb-8 shadow">
+        <div className="card-header bg-white border-b px-4 py-3">
           <div className="flex items-center justify-between">
-            <h2 className="card-title text-lg">
+            <h2 className="card-title text-lg font-medium text-gray-800">
               What would you like to learn?
             </h2>
             <div className="flex items-center space-x-2">
@@ -187,8 +196,7 @@ const Ask: React.FC = () => {
                   inputMode === "text" ? "btn-primary" : "btn-outline"
                 }`}
               >
-                <i className="fas fa-keyboard mr-2"></i>
-                Text
+                <i className="fas fa-keyboard mr-2"></i> Text
               </button>
               <button
                 type="button"
@@ -197,8 +205,7 @@ const Ask: React.FC = () => {
                   inputMode === "voice" ? "btn-primary" : "btn-outline"
                 }`}
               >
-                <i className="fas fa-microphone mr-2"></i>
-                Voice
+                <i className="fas fa-microphone mr-2"></i> Voice
               </button>
               <button
                 type="button"
@@ -207,24 +214,27 @@ const Ask: React.FC = () => {
                   inputMode === "pdf" ? "btn-primary" : "btn-outline"
                 }`}
               >
-                <i className="fas fa-file-pdf mr-2"></i>
-                PDF
+                <i className="fas fa-file-pdf mr-2"></i> PDF
               </button>
             </div>
           </div>
         </div>
 
-        <div className="card-content">
-          {inputMode === "voice" ? (
+        <div className="card-content bg-white p-6">
+          {/* Voice Mode */}
+          {inputMode === "voice" && (
             <div className="text-center py-8">
               <VoiceRecorder
                 onTranscription={handleVoiceTranscription}
                 disabled={loading}
               />
             </div>
-          ) : inputMode === "pdf" ? (
+          )}
+
+          {/* PDF Mode */}
+          {inputMode === "pdf" && (
             <div className="space-y-6">
-              {/* PDF Upload Section */}
+              {/* Upload Section */}
               {!pdfFile ? (
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                   <i className="fas fa-file-pdf text-4xl text-gray-400 mb-4"></i>
@@ -233,7 +243,7 @@ const Ask: React.FC = () => {
                   </h3>
                   <p className="text-gray-600 mb-4">
                     Upload a PDF to get an AI summary and chat about its
-                    contents
+                    contents.
                   </p>
                   <input
                     type="file"
@@ -261,8 +271,7 @@ const Ask: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <i className="fas fa-upload mr-2"></i>
-                        Choose PDF File
+                        <i className="fas fa-upload mr-2"></i> Choose PDF File
                       </>
                     )}
                   </label>
@@ -271,32 +280,30 @@ const Ask: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                <div>
+                <>
                   {/* PDF Info */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
-                    <div className="flex items-center">
-                      <i className="fas fa-file-pdf text-blue-600 text-xl mr-3"></i>
-                      <div>
-                        <h4 className="font-medium text-blue-900">
-                          {pdfFile.name}
-                        </h4>
-                        <p className="text-sm text-blue-700">
-                          PDF uploaded and analyzed
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setPdfFile(null);
-                          setPdfSummary("");
-                          setChatSessionId(null);
-                          setChatHistory([]);
-                        }}
-                        className="ml-auto text-blue-600 hover:text-blue-800"
-                      >
-                        <i className="fas fa-times"></i>
-                      </button>
+                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex items-center">
+                    <i className="fas fa-file-pdf text-blue-600 text-xl mr-3"></i>
+                    <div>
+                      <h4 className="font-medium text-blue-900">
+                        {pdfFile.name}
+                      </h4>
+                      <p className="text-sm text-blue-700">
+                        PDF uploaded and analyzed
+                      </p>
                     </div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPdfFile(null);
+                        setPdfSummary("");
+                        setChatSessionId(null);
+                        setChatHistory([]);
+                      }}
+                      className="ml-auto text-blue-600 hover:text-blue-800"
+                    >
+                      <i className="fas fa-times"></i>
+                    </button>
                   </div>
 
                   {/* Chat History */}
@@ -341,14 +348,14 @@ const Ask: React.FC = () => {
                     </div>
                   )}
 
-                  {/* Chat Input */}
+                  {/* Chat Input Form */}
                   <form onSubmit={handlePdfChat} className="space-y-4">
                     <div>
                       <textarea
                         value={question}
                         onChange={(e) => setQuestion(e.target.value)}
                         placeholder="Ask questions about your PDF... (e.g., 'What are the main points?', 'Explain this concept in detail')"
-                        className="input w-full h-24 resize-none"
+                        className="input w-full h-24 resize-none border border-gray-300 rounded p-2"
                         disabled={loading}
                       />
                     </div>
@@ -362,8 +369,8 @@ const Ask: React.FC = () => {
                         className="btn btn-outline btn-sm"
                         disabled={!chatSessionId}
                       >
-                        <i className="fas fa-question-circle mr-2"></i>
-                        Generate Quiz
+                        <i className="fas fa-question-circle mr-2"></i> Generate
+                        Quiz
                       </button>
                       <button
                         type="submit"
@@ -377,24 +384,27 @@ const Ask: React.FC = () => {
                           </>
                         ) : (
                           <>
-                            <i className="fas fa-paper-plane mr-2"></i>
-                            Send Message
+                            <i className="fas fa-paper-plane mr-2"></i> Send
+                            Message
                           </>
                         )}
                       </button>
                     </div>
                   </form>
-                </div>
+                </>
               )}
             </div>
-          ) : (
+          )}
+
+          {/* Text Mode */}
+          {inputMode === "text" && (
             <form onSubmit={handleSubmit} className="space-y-4">
               <div>
                 <textarea
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
                   placeholder="Ask your question here... (e.g., 'Explain how machine learning works', 'What is the difference between React and Vue?')"
-                  className="input w-full h-32 resize-none"
+                  className="input w-full h-32 resize-none border border-gray-300 rounded p-2"
                   disabled={loading}
                 />
               </div>
@@ -411,8 +421,7 @@ const Ask: React.FC = () => {
                     </>
                   ) : (
                     <>
-                      <i className="fas fa-paper-plane mr-2"></i>
-                      Ask AI
+                      <i className="fas fa-paper-plane mr-2"></i> Ask AI
                     </>
                   )}
                 </button>
@@ -422,42 +431,37 @@ const Ask: React.FC = () => {
         </div>
       </div>
 
-      {/* Response Section */}
+      {/* AI Response Section */}
       {response && (
-        <div className="card animate-slide-up">
-          <div className="card-header">
-            <h2 className="card-title flex items-center">
-              <i className="fas fa-robot text-primary-500 mr-2"></i>
-              AI Response
+        <div className="card animate-slide-up shadow">
+          <div className="card-header bg-white border-b px-4 py-3">
+            <h2 className="card-title flex items-center text-lg font-medium text-gray-800">
+              <i className="fas fa-robot text-primary-500 mr-2"></i> AI Response
             </h2>
           </div>
-          <div className="card-content">
+          <div className="card-content bg-white p-6">
             <div className="prose max-w-none">
               <div
                 className="text-gray-700 leading-relaxed"
-                dangerouslySetInnerHTML={{
-                  __html: formatAIResponse(response.text),
-                }}
+                dangerouslySetInnerHTML={{ __html: formatAIResponse(response.text) }}
               />
-
-              {response.hasCode &&
-                response.codeSnippet &&
-                renderCodeSnippet(response.codeSnippet, response.language)}
-
-              {response.hasChart && response.chartData && (
-                <div className="mt-6">
-                  <h4 className="text-lg font-semibold mb-4">
-                    Visual Representation
-                  </h4>
-                  <div className="bg-gray-50 p-4 rounded-lg">
-                    <p className="text-gray-600 text-center">
-                      Chart visualization would be displayed here based on the
-                      data provided.
-                    </p>
-                  </div>
-                </div>
-              )}
             </div>
+
+            {response.hasCode &&
+              response.codeSnippet &&
+              renderCodeSnippet(response.codeSnippet, response.language)}
+
+            {response.hasChart && response.chartData && (
+              <div className="mt-6">
+                <h4 className="text-lg font-semibold mb-4">Visual Representation</h4>
+                <div className="bg-gray-50 p-4 rounded-lg">
+                  <p className="text-gray-600 text-center">
+                    Chart visualization would be displayed here based on the data
+                    provided.
+                  </p>
+                </div>
+              </div>
+            )}
 
             <div className="mt-6 pt-4 border-t border-gray-200">
               <div className="flex items-center justify-between">
@@ -466,13 +470,10 @@ const Ask: React.FC = () => {
                     onClick={() => setQuestion("")}
                     className="btn btn-outline btn-sm"
                   >
-                    <i className="fas fa-plus mr-2"></i>
-                    Ask Another Question
+                    <i className="fas fa-plus mr-2"></i> Ask Another Question
                   </button>
                 </div>
-                <div className="text-sm text-gray-500">
-                  Powered by Gemini Pro AI
-                </div>
+                <div className="text-sm text-gray-500">Powered by Gemini Pro AI</div>
               </div>
             </div>
           </div>
@@ -481,11 +482,11 @@ const Ask: React.FC = () => {
 
       {/* Quick Examples */}
       {!response && !loading && (
-        <div className="card">
-          <div className="card-header">
-            <h3 className="card-title text-lg">Try asking about:</h3>
+        <div className="card shadow">
+          <div className="card-header bg-white border-b px-4 py-3">
+            <h3 className="card-title text-lg font-medium text-gray-800">Try asking about:</h3>
           </div>
-          <div className="card-content">
+          <div className="card-content bg-white p-6">
             <div className="grid md:grid-cols-2 gap-4">
               {[
                 "Explain quantum physics in simple terms",
