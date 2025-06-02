@@ -1,7 +1,6 @@
 // src/pages/Ask.tsx
 // -----------------
-// Revised Ask component with all JSX tags closed properly.
-// React + TypeScript + Vite (import.meta.env.VITE_API_URL) integration assumed.
+// Fully balanced, revised Ask component (React + TypeScript + Vite + Tailwind).
 
 import React, { useState } from "react";
 import VoiceRecorder from "../components/VoiceRecorder";
@@ -233,167 +232,173 @@ const Ask: React.FC = () => {
 
           {/* PDF Mode */}
           {inputMode === "pdf" && (
-            <div className="space-y-6">
-              {/* Upload Section */}
-              {!pdfFile ? (
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                  <i className="fas fa-file-pdf text-4xl text-gray-400 mb-4"></i>
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">
-                    Upload a PDF Document
-                  </h3>
-                  <p className="text-gray-600 mb-4">
-                    Upload a PDF to get an AI summary and chat about its
-                    contents.
-                  </p>
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => {
-                      const file = e.target.files?.[0];
-                      if (file) handlePdfUpload(file);
-                    }}
-                    className="hidden"
-                    id="pdf-upload"
-                    disabled={uploadingPdf}
-                  />
-                  <label
-                    htmlFor="pdf-upload"
-                    className={`btn btn-primary ${
-                      uploadingPdf
-                        ? "opacity-50 cursor-not-allowed"
-                        : "cursor-pointer"
-                    }`}
-                  >
-                    {uploadingPdf ? (
-                      <>
-                        <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                        Processing PDF...
-                      </>
-                    ) : (
-                      <>
-                        <i className="fas fa-upload mr-2"></i> Choose PDF File
-                      </>
-                    )}
-                  </label>
-                  <p className="text-sm text-gray-500 mt-2">
-                    Maximum file size: 10MB
-                  </p>
-                </div>
-              ) : (
-                <>
-                  {/* PDF Info */}
-                  <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex items-center">
-                    <i className="fas fa-file-pdf text-blue-600 text-xl mr-3"></i>
-                    <div>
-                      <h4 className="font-medium text-blue-900">
-                        {pdfFile.name}
-                      </h4>
-                      <p className="text-sm text-blue-700">
-                        PDF uploaded and analyzed
-                      </p>
-                    </div>
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setPdfFile(null);
-                        setPdfSummary("");
-                        setChatSessionId(null);
-                        setChatHistory([]);
+            <>
+              <div className="space-y-6">
+                {/* If no PDF uploaded yet, show upload button */}
+                {!pdfFile ? (
+                  <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
+                    <i className="fas fa-file-pdf text-4xl text-gray-400 mb-4"></i>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">
+                      Upload a PDF Document
+                    </h3>
+                    <p className="text-gray-600 mb-4">
+                      Upload a PDF to get an AI summary and chat about its
+                      contents.
+                    </p>
+                    <input
+                      type="file"
+                      accept=".pdf"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) handlePdfUpload(file);
                       }}
-                      className="ml-auto text-blue-600 hover:text-blue-800"
+                      className="hidden"
+                      id="pdf-upload"
+                      disabled={uploadingPdf}
+                    />
+                    <label
+                      htmlFor="pdf-upload"
+                      className={`btn btn-primary ${
+                        uploadingPdf
+                          ? "opacity-50 cursor-not-allowed"
+                          : "cursor-pointer"
+                      }`}
                     >
-                      <i className="fas fa-times"></i>
-                    </button>
+                      {uploadingPdf ? (
+                        <>
+                          <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                          Processing PDF...
+                        </>
+                      ) : (
+                        <>
+                          <i className="fas fa-upload mr-2"></i> Choose PDF
+                          File
+                        </>
+                      )}
+                    </label>
+                    <p className="text-sm text-gray-500 mt-2">
+                      Maximum file size: 10MB
+                    </p>
                   </div>
-
-                  {/* Chat History */}
-                  {chatHistory.length > 0 && (
-                    <div className="bg-gray-50 rounded-lg p-4 mb-4 max-h-64 overflow-y-auto">
-                      <h4 className="font-medium text-gray-900 mb-3">
-                        Conversation
-                      </h4>
-                      <div className="space-y-3">
-                        {chatHistory.map((msg, index) => (
-                          <div
-                            key={index}
-                            className={`flex ${
-                              msg.type === "user"
-                                ? "justify-end"
-                                : "justify-start"
-                            }`}
-                          >
-                            <div
-                              className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
-                                msg.type === "user"
-                                  ? "bg-blue-600 text-white"
-                                  : "bg-white border border-gray-200"
-                              }`}
-                            >
-                              {msg.type === "user" ? (
-                                <p className="text-sm whitespace-pre-wrap">
-                                  {msg.content}
-                                </p>
-                              ) : (
-                                <div
-                                  className="text-sm"
-                                  dangerouslySetInnerHTML={{
-                                    __html: formatAIResponse(msg.content),
-                                  }}
-                                />
-                              )}
-                            </div>
-                          </div>
-                        ))}
+                ) : (
+                  <>
+                    {/* PDF Info */}
+                    <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex items-center">
+                      <i className="fas fa-file-pdf text-blue-600 text-xl mr-3"></i>
+                      <div>
+                        <h4 className="font-medium text-blue-900">
+                          {pdfFile.name}
+                        </h4>
+                        <p className="text-sm text-blue-700">
+                          PDF uploaded and analyzed
+                        </p>
                       </div>
-                    </div>
-                  )}
-
-                  {/* Chat Input Form */}
-                  <form onSubmit={handlePdfChat} className="space-y-4">
-                    <div>
-                      <textarea
-                        value={question}
-                        onChange={(e) => setQuestion(e.target.value)}
-                        placeholder="Ask questions about your PDF... (e.g., 'What are the main points?', 'Explain this concept in detail')"
-                        className="input w-full h-24 resize-none border border-gray-300 rounded p-2"
-                        disabled={loading}
-                      />
-                    </div>
-                    <div className="flex justify-between items-center">
                       <button
                         type="button"
                         onClick={() => {
-                          // Navigate to quiz page with PDF session
-                          window.location.href = `/quiz?chat_session_id=${chatSessionId}`;
+                          setPdfFile(null);
+                          setPdfSummary("");
+                          setChatSessionId(null);
+                          setChatHistory([]);
                         }}
-                        className="btn btn-outline btn-sm"
-                        disabled={!chatSessionId}
+                        className="ml-auto text-blue-600 hover:text-blue-800"
                       >
-                        <i className="fas fa-question-circle mr-2"></i> Generate
-                        Quiz
-                      </button>
-                      <button
-                        type="submit"
-                        disabled={loading || !question.trim()}
-                        className="btn btn-primary"
-                      >
-                        {loading ? (
-                          <>
-                            <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
-                            Processing...
-                          </>
-                        ) : (
-                          <>
-                            <i className="fas fa-paper-plane mr-2"></i> Send
-                            Message
-                          </>
-                        )}
+                        <i className="fas fa-times"></i>
                       </button>
                     </div>
-                  </form>
-                </>
-              )}
-            </div>
+
+                    {/* Chat History */}
+                    {chatHistory.length > 0 && (
+                      <div className="bg-gray-50 rounded-lg p-4 mb-4 max-h-64 overflow-y-auto">
+                        <h4 className="font-medium text-gray-900 mb-3">
+                          Conversation
+                        </h4>
+                        <div className="space-y-3">
+                          {chatHistory.map((msg, index) => (
+                            <div
+                              key={index}
+                              className={`flex ${
+                                msg.type === "user"
+                                  ? "justify-end"
+                                  : "justify-start"
+                              }`}
+                            >
+                              <div
+                                className={`max-w-xs lg:max-w-md px-4 py-2 rounded-lg ${
+                                  msg.type === "user"
+                                    ? "bg-blue-600 text-white"
+                                    : "bg-white border border-gray-200"
+                                }`}
+                              >
+                                {msg.type === "user" ? (
+                                  <p className="text-sm whitespace-pre-wrap">
+                                    {msg.content}
+                                  </p>
+                                ) : (
+                                  <div
+                                    className="text-sm"
+                                    dangerouslySetInnerHTML={{
+                                      __html: formatAIResponse(msg.content),
+                                    }}
+                                  />
+                                )}
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+
+                    {/* Chat Input Form */}
+                    <form
+                      onSubmit={handlePdfChat}
+                      className="space-y-4"
+                    >
+                      <div>
+                        <textarea
+                          value={question}
+                          onChange={(e) => setQuestion(e.target.value)}
+                          placeholder="Ask questions about your PDF... (e.g., 'What are the main points?', 'Explain this concept in detail')"
+                          className="input w-full h-24 resize-none border border-gray-300 rounded p-2"
+                          disabled={loading}
+                        />
+                      </div>
+                      <div className="flex justify-between items-center">
+                        <button
+                          type="button"
+                          onClick={() => {
+                            // Navigate to quiz page with PDF session
+                            window.location.href = `/quiz?chat_session_id=${chatSessionId}`;
+                          }}
+                          className="btn btn-outline btn-sm"
+                          disabled={!chatSessionId}
+                        >
+                          <i className="fas fa-question-circle mr-2"></i> Generate
+                          Quiz
+                        </button>
+                        <button
+                          type="submit"
+                          disabled={loading || !question.trim()}
+                          className="btn btn-primary"
+                        >
+                          {loading ? (
+                            <>
+                              <div className="animate-spin w-4 h-4 border-2 border-white border-t-transparent rounded-full mr-2"></div>
+                              Processing...
+                            </>
+                          ) : (
+                            <>
+                              <i className="fas fa-paper-plane mr-2"></i> Send
+                              Message
+                            </>
+                          )}
+                        </button>
+                      </div>
+                    </form>
+                  </>
+                )}
+              </div>
+            </>
           )}
 
           {/* Text Mode */}
