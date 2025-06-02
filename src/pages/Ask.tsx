@@ -1,5 +1,6 @@
 // src/pages/Ask.tsx
-// Fully balanced JSX, React + TypeScript + Vite + Tailwind
+// -----------------
+// React + TypeScript + Vite + Tailwind | Fully balanced JSX
 
 import React, { useState } from "react";
 import VoiceRecorder from "../components/VoiceRecorder";
@@ -27,7 +28,7 @@ const Ask: React.FC = () => {
   >([]);
   const [uploadingPdf, setUploadingPdf] = useState(false);
 
-  // 1) Handle text‐based submissions
+  // 1) Handle text submission
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim()) return;
@@ -35,21 +36,21 @@ const Ask: React.FC = () => {
     try {
       const data = await apiClient.askQuestion(question);
       setResponse(data);
-    } catch (error) {
-      console.error("Error asking AI:", error);
+    } catch (err) {
+      console.error("Error asking AI:", err);
       alert("Failed to get AI response. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // 2) Receive transcribed text from VoiceRecorder
+  // 2) Handle voice transcription
   const handleVoiceTranscription = (text: string) => {
     setQuestion(text);
     setInputMode("text");
   };
 
-  // 3) Handle PDF upload (initialize chat session)
+  // 3) Handle PDF upload and initialize chat
   const handlePdfUpload = async (file: File) => {
     setUploadingPdf(true);
     try {
@@ -64,15 +65,15 @@ const Ask: React.FC = () => {
         },
       ]);
       alert("PDF uploaded and analyzed successfully!");
-    } catch (error) {
-      console.error("Error uploading PDF:", error);
+    } catch (err) {
+      console.error("Error uploading PDF:", err);
       alert("Failed to upload PDF. Please try again.");
     } finally {
       setUploadingPdf(false);
     }
   };
 
-  // 4) Chat with PDF (send question to existing session)
+  // 4) Chat with PDF session
   const handlePdfChat = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!question.trim() || !chatSessionId) return;
@@ -85,65 +86,53 @@ const Ask: React.FC = () => {
         { type: "ai", content: data.response.text },
       ]);
       setQuestion("");
-    } catch (error) {
-      console.error("Error chatting with PDF:", error);
+    } catch (err) {
+      console.error("Error chatting with PDF:", err);
       alert("Failed to get AI response. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  // 5) Format AI response text (markdown → HTML)
+  // 5) Format markdown-style AI response to HTML
   const formatAIResponse = (text: string): string => {
     let formatted = text
-      // **bold**
-      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>")
-      // *italic*
-      .replace(/\*(.*?)\*/g, "<em>$1</em>")
-      // Numbered lists
+      .replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>") // **bold**
+      .replace(/\*(.*?)\*/g, "<em>$1</em>") // *italic*
       .replace(
         /^(\d+)\.\s+(.+)$/gm,
         '<div class="mb-2"><span class="font-semibold text-blue-600">$1.</span> $2</div>'
-      )
-      // Bullets
+      ) // numbered lists
       .replace(
         /^[-*]\s+(.+)$/gm,
         '<div class="mb-2 ml-4"><span class="text-blue-600 mr-2">•</span>$1</div>'
-      )
-      // ### headings
+      ) // bullet points
       .replace(
         /^###\s+(.+)$/gm,
         '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">$1</h3>'
-      )
-      // ## headings
+      ) // ### heading
       .replace(
         /^##\s+(.+)$/gm,
         '<h2 class="text-xl font-bold text-gray-900 mt-6 mb-4">$1</h2>'
-      )
-      // Code blocks ```lang
+      ) // ## heading
       .replace(
         /```(\w+)?\n([\s\S]*?)```/g,
         '<pre class="bg-gray-100 p-4 rounded-lg mt-4 mb-4 overflow-x-auto"><code class="text-sm">$2</code></pre>'
-      )
-      // Inline `code`
+      ) // code block
       .replace(
         /`([^`]+)`/g,
         '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>'
-      )
-      // Double line breaks → paragraphs
-      .replace(/\n\n/g, '</p><p class="mb-4">')
-      // Wrap entire text in <p>
+      ) // inline code
+      .replace(/\n\n/g, '</p><p class="mb-4">') // double line break to paragraphs
       .replace(/^/, '<p class="mb-4">')
       .replace(/$/, "</p>")
-      // Remove empty paragraphs
-      .replace(/<p class="mb-4"><\/p>/g, "")
-      // Ensure spacing around headings
+      .replace(/<p class="mb-4"><\/p>/g, "") // remove empty
       .replace(/(<h[2-3][^>]*>)/g, '<div class="mt-6">$1')
       .replace(/(<\/h[2-3]>)/g, "$1</div>");
     return formatted;
   };
 
-  // 6) Render code snippet block
+  // 6) Render code snippet block with copy
   const renderCodeSnippet = (code: string, language: string = "javascript") => (
     <div className="mt-4">
       <div className="bg-gray-900 rounded-lg overflow-hidden">
@@ -165,7 +154,7 @@ const Ask: React.FC = () => {
 
   return (
     <div className="max-w-4xl mx-auto p-4">
-      {/* Header */}
+      {/* Page Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">Ask AI Tutor</h1>
         <p className="text-gray-600">
@@ -226,7 +215,7 @@ const Ask: React.FC = () => {
 
           {/* PDF Mode */}
           {inputMode === "pdf" && (
-            <> {/* fragment wraps multiple elements */}
+            <>
               {!pdfFile ? (
                 <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                   <i className="fas fa-file-pdf text-4xl text-gray-400 mb-4"></i>
@@ -263,7 +252,8 @@ const Ask: React.FC = () => {
                       </>
                     ) : (
                       <>
-                        <i className="fas fa-upload mr-2"></i> Choose PDF File
+                        <i className="fas fa-upload mr-2"></i> Choose PDF
+                        File
                       </>
                     )}
                   </label>
@@ -272,7 +262,7 @@ const Ask: React.FC = () => {
                   </p>
                 </div>
               ) : (
-                <> {/* fragment for PDF‐uploaded state */}
+                <>
                   <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4 flex items-center">
                     <i className="fas fa-file-pdf text-blue-600 text-xl mr-3"></i>
                     <div>
@@ -343,7 +333,7 @@ const Ask: React.FC = () => {
                       <textarea
                         value={question}
                         onChange={(e) => setQuestion(e.target.value)}
-                        placeholder="Ask questions about your PDF..."
+                        placeholder="Ask questions about your PDF... (e.g., 'What are the main points?', 'Explain this concept in detail')"
                         className="input w-full h-24 resize-none border border-gray-300 rounded p-2"
                         disabled={loading}
                       />
@@ -352,7 +342,6 @@ const Ask: React.FC = () => {
                       <button
                         type="button"
                         onClick={() => {
-                          // Navigate to quiz page with PDF session
                           window.location.href = `/quiz?chat_session_id=${chatSessionId}`;
                         }}
                         className="btn btn-outline btn-sm"
@@ -392,7 +381,7 @@ const Ask: React.FC = () => {
                 <textarea
                   value={question}
                   onChange={(e) => setQuestion(e.target.value)}
-                  placeholder="Ask your question here..."
+                  placeholder="Ask your question here... (e.g., 'Explain how machine learning works', 'What is the difference between React and Vue?')"
                   className="input w-full h-32 resize-none border border-gray-300 rounded p-2"
                   disabled={loading}
                 />
@@ -420,7 +409,7 @@ const Ask: React.FC = () => {
         </div>
       </div>
 
-      {/* AI Response Section (conditionally shown) */}
+      {/* AI Response Section */}
       {response && (
         <div className="card animate-slide-up shadow">
           <div className="card-header bg-white border-b px-4 py-3">
@@ -436,12 +425,10 @@ const Ask: React.FC = () => {
               />
             </div>
 
-            {/* Code Snippet Block */}
             {response.hasCode &&
               response.codeSnippet &&
               renderCodeSnippet(response.codeSnippet, response.language)}
 
-            {/* Chart Placeholder */}
             {response.hasChart && response.chartData && (
               <div className="mt-6">
                 <h4 className="text-lg font-semibold mb-4">Visual Representation</h4>
@@ -471,7 +458,7 @@ const Ask: React.FC = () => {
         </div>
       )}
 
-      {/* Quick Examples Footer */}
+      {/* Quick Examples */}
       {!response && !loading && (
         <div className="card shadow">
           <div className="card-header bg-white border-b px-4 py-3">
