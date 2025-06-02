@@ -1,11 +1,19 @@
-const API_BASE = "/api";
+// Grab the VITE_API_URL that Vite injects at build time
+const API_BASE = import.meta.env.VITE_API_URL as string;
+
+if (!API_BASE) {
+  throw new Error('VITE_API_URL is not defined. Make sure you set it in .env');
+}
+
+// Append /api to the base URL since your endpoints expect it
+const API_ENDPOINT = `${API_BASE}/api`;
 
 class APIClient {
   private async request<T>(
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    const url = `${API_BASE}${endpoint}`;
+    const url = `${API_ENDPOINT}${endpoint}`;
     const config = {
       credentials: "include" as RequestCredentials,
       headers: {
