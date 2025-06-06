@@ -61,6 +61,19 @@ const StudentDashboard: React.FC = () => {
       setDashboardData(data);
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
+      // Set empty dashboard data to prevent crashes
+      setDashboardData({
+        user: { name: "Student", email: "" },
+        enrolled_courses: [],
+        recent_activities: [],
+        upcoming_deadlines: [],
+        performance_summary: {
+          total_courses: 0,
+          completed_assignments: 0,
+          average_grade: 0,
+          attendance_rate: 0,
+        },
+      });
     } finally {
       setLoading(false);
     }
