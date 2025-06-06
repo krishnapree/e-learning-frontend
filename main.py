@@ -59,11 +59,11 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="EduFlow API", version="1.0.0", description="AI-Powered Learning Management System")
 
 # Configure CORS with environment-based origins
-origins = os.getenv("CORS_ORIGINS", "http://localhost:5000,http://127.0.0.1:5000").split(",")
+origins = os.getenv("CORS_ORIGINS", "*").split(",")
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Allow all origins for now, or specify your Vercel domain
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -120,7 +120,7 @@ async def register(request: RegisterRequest, response: Response, db: Session = D
             key="access_token",
             value=token,
             httponly=True,
-            secure=False,  # Set to True in production with HTTPS
+            secure=os.getenv("ENVIRONMENT") == "production",  # True in production with HTTPS
             samesite="lax",
             max_age=86400 * 7  # 7 days
         )
@@ -148,7 +148,7 @@ async def login(request: LoginRequest, response: Response, db: Session = Depends
             key="access_token",
             value=token,
             httponly=True,
-            secure=False,  # Set to True in production with HTTPS
+            secure=os.getenv("ENVIRONMENT") == "production",  # True in production with HTTPS
             samesite="lax",
             max_age=86400 * 7  # 7 days
         )

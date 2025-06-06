@@ -2,6 +2,7 @@
 
 import React, { useState } from "react";
 import VoiceRecorder from "../components/VoiceRecorder";
+import { apiClient } from "../api/client";
 
 interface AIResponse {
   text: string;
@@ -31,17 +32,8 @@ const Ask: React.FC = () => {
 
     setLoading(true);
     try {
-      const res = await fetch("/api/ask", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({ question }),
-      });
-
-      if (!res.ok) throw new Error("Failed to get response");
-
-      const data = await res.json();
-      setResponse(data);
+      const data = await apiClient.askQuestion(question);
+      setResponse(data as AIResponse);
     } catch (error) {
       console.error("Error:", error);
       alert("Failed to get AI response. Please try again.");
@@ -127,27 +119,27 @@ const Ask: React.FC = () => {
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
       .replace(
         /^(\d+)\.\s+(.+)$/gm,
-        '<div class="mb-2"><span class="font-semibold text-blue-600">$1.</span> $2</div>',
+        '<div class="mb-2"><span class="font-semibold text-blue-600">$1.</span> $2</div>'
       )
       .replace(
         /^[-*]\s+(.+)$/gm,
-        '<div class="mb-2 ml-4"><span class="text-blue-600 mr-2">•</span>$1</div>',
+        '<div class="mb-2 ml-4"><span class="text-blue-600 mr-2">•</span>$1</div>'
       )
       .replace(
         /^###\s+(.+)$/gm,
-        '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">$1</h3>',
+        '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">$1</h3>'
       )
       .replace(
         /^##\s+(.+)$/gm,
-        '<h2 class="text-xl font-bold text-gray-900 mt-6 mb-4">$1</h2>',
+        '<h2 class="text-xl font-bold text-gray-900 mt-6 mb-4">$1</h2>'
       )
       .replace(
         /```(\w+)?\n([\s\S]*?)```/g,
-        '<pre class="bg-gray-100 p-4 rounded-lg mt-4 mb-4 overflow-x-auto"><code class="text-sm">$2</code></pre>',
+        '<pre class="bg-gray-100 p-4 rounded-lg mt-4 mb-4 overflow-x-auto"><code class="text-sm">$2</code></pre>'
       )
       .replace(
         /`([^`]+)`/g,
-        '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>',
+        '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>'
       )
       .replace(/\n\n/g, '</p><p class="mb-4">')
       .replace(/^/, '<p class="mb-4">')
@@ -197,8 +189,8 @@ const Ask: React.FC = () => {
                 mode === "text"
                   ? "fa-keyboard"
                   : mode === "voice"
-                    ? "fa-microphone"
-                    : "fa-file-pdf"
+                  ? "fa-microphone"
+                  : "fa-file-pdf"
               } mr-2`}
             />
             {mode.charAt(0).toUpperCase() + mode.slice(1)}
