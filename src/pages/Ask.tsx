@@ -32,11 +32,21 @@ const Ask: React.FC = () => {
 
     setLoading(true);
     try {
+      // Debug: Log the API URL being used
+      console.log("API Base URL:", import.meta.env.VITE_API_URL);
+
       const data = await apiClient.askQuestion(question);
       setResponse(data as AIResponse);
     } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to get AI response. Please try again.");
+      console.error("Error details:", error);
+      console.error("API URL:", import.meta.env.VITE_API_URL);
+
+      // More detailed error message
+      const errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
+      alert(
+        `Failed to get AI response: ${errorMessage}. Check console for details.`
+      );
     } finally {
       setLoading(false);
     }

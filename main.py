@@ -61,6 +61,7 @@ app = FastAPI(title="EduFlow API", version="1.0.0", description="AI-Powered Lear
 # Configure CORS with environment-based origins
 origins = [
     "https://elearningmanagement.vercel.app",
+    "https://e-learning-management-eight.vercel.app",  # Add your actual Vercel domain
     "http://localhost:5000",
     "http://127.0.0.1:5000",
     "*"  # Allow all origins as fallback
@@ -2655,6 +2656,15 @@ async def get_student_quiz_attempts(
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
+
+@app.get("/api/test")
+async def test_endpoint():
+    """Test endpoint to verify API connectivity"""
+    return {
+        "message": "API is working!",
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "cors_enabled": True
+    }
 
 @app.options("/{path:path}")
 async def options_handler(path: str):

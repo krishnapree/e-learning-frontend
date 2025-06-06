@@ -23,6 +23,11 @@ class APIClient {
       ...options,
     };
 
+    // Debug logging
+    console.log(`Making API request to: ${url}`);
+    console.log(`API_BASE: ${API_BASE}`);
+    console.log(`API_ENDPOINT: ${API_ENDPOINT}`);
+
     try {
       const response = await fetch(url, config);
 
@@ -30,6 +35,13 @@ class APIClient {
         const errorData = await response.json().catch(() => ({
           message: `HTTP error ${response.status}`,
         }));
+
+        console.error(`API Error Response:`, {
+          status: response.status,
+          statusText: response.statusText,
+          url: url,
+          errorData,
+        });
 
         // Structured error with status code and message
         const error = new Error(
@@ -45,7 +57,12 @@ class APIClient {
 
       return response.json();
     } catch (error) {
-      console.error(`API request failed: ${endpoint}`, error);
+      console.error(`API request failed: ${endpoint}`, {
+        url,
+        error,
+        API_BASE,
+        API_ENDPOINT,
+      });
       throw error;
     }
   }
