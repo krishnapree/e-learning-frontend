@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # 🎓 EduFlow - Modern Learning Management System
 
 A comprehensive full-stack Learning Management System built with React, TypeScript, FastAPI, and modern web technologies. Designed for educational institutions with multi-role support, course management, quiz systems, and administrative tools.
