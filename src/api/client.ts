@@ -1,5 +1,5 @@
 // Grab the VITE_API_URL that Vite injects at build time
-const API_BASE = (import.meta as any).env.VITE_API_URL as string;
+const API_BASE = import.meta.env.VITE_API_URL;
 
 if (!API_BASE) {
   throw new Error("VITE_API_URL is not defined. Make sure you set it in .env");
