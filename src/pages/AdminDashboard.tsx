@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
-// import { apiClient } from "../api/client";
+import { apiClient } from "../api/client";
 
 interface AcademicOverview {
   total_students: number;
@@ -40,21 +40,23 @@ const AdminDashboard: React.FC = () => {
       setLoading(true);
 
       // Fetch academic overview
-      const overviewResponse = await fetch("/api/academic/overview", {
-        credentials: "include",
-      });
-      if (overviewResponse.ok) {
-        const overviewData = await overviewResponse.json();
+      try {
+        const overviewData = await apiClient.makeRequest<AcademicOverview>(
+          "/academic/overview"
+        );
         setOverview(overviewData);
+      } catch (error) {
+        console.error("Failed to fetch academic overview:", error);
       }
 
       // Fetch recent users (students)
-      const usersResponse = await fetch("/api/users/by-role/student", {
-        credentials: "include",
-      });
-      if (usersResponse.ok) {
-        const usersData = await usersResponse.json();
+      try {
+        const usersData = await apiClient.makeRequest<{ users: User[] }>(
+          "/users/by-role/student"
+        );
         setRecentUsers(usersData.users.slice(0, 5)); // Show latest 5
+      } catch (error) {
+        console.error("Failed to fetch recent users:", error);
       }
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);

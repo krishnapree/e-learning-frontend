@@ -202,6 +202,14 @@ class APIClient {
   async getDashboardData(range: string = "week") {
     return this.request(`/dashboard?range=${range}`);
   }
+
+  // Generic request method for custom endpoints
+  async makeRequest<T>(
+    endpoint: string,
+    options: RequestInit = {}
+  ): Promise<T> {
+    return this.request<T>(endpoint, options);
+  }
 }
 
 export const apiClient = new APIClient();

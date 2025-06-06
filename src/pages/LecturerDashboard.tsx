@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { useAuth } from "../hooks/useAuth";
 import { Link } from "react-router-dom";
+import { apiClient } from "../api/client";
 
 interface LecturerDashboard {
   current_semester: {
@@ -49,14 +50,10 @@ const LecturerDashboard: React.FC = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const response = await fetch("/api/users/dashboard", {
-        credentials: "include",
-      });
-
-      if (response.ok) {
-        const data = await response.json();
-        setDashboardData(data);
-      }
+      const data = await apiClient.makeRequest<LecturerDashboard>(
+        "/users/dashboard"
+      );
+      setDashboardData(data);
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
     } finally {
