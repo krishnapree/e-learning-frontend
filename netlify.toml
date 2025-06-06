@@ -1,0 +1,26 @@
+[build]
+  # Build command for the frontend
+  command = "npm install && npm run build"
+  
+  # Directory to publish (Vite builds to 'dist')
+  publish = "dist"
+  
+  # Base directory (root of the project)
+  base = "."
+
+[build.environment]
+  # Node.js version
+  NODE_VERSION = "18"
+
+# Redirect all routes to index.html for SPA routing
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Environment variables (you can also set these in Netlify dashboard)
+[context.production.environment]
+  VITE_API_URL = "https://e-learning-1-5tmf.onrender.com"
+
+[context.deploy-preview.environment]
+  VITE_API_URL = "https://e-learning-1-5tmf.onrender.com"
