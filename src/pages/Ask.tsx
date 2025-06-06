@@ -1,4 +1,4 @@
-// pages/ask.tsx
+// src/pages/Ask.tsx
 
 import React, { useState } from "react";
 import VoiceRecorder from "../components/VoiceRecorder";
@@ -167,7 +167,8 @@ const Ask: React.FC = () => {
             onClick={() => navigator.clipboard.writeText(code)}
             className="text-gray-400 hover:text-white text-sm"
           >
-            <i className="fas fa-copy mr-1" /> Copy
+            <i className="fas fa-copy mr-1" />
+            Copy
           </button>
         </div>
         <pre className="p-4 text-green-400 text-sm overflow-x-auto">
@@ -244,7 +245,7 @@ const Ask: React.FC = () => {
 
       {inputMode === "pdf" && (
         <div>
-          {/* Add your PDF input + chat logic here if needed */}
+          {/* You can add the PDF upload + chat component here */}
         </div>
       )}
 
