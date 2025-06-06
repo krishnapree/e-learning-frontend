@@ -61,10 +61,10 @@ app = FastAPI(title="EduFlow API", version="1.0.0", description="AI-Powered Lear
 # Configure CORS with environment-based origins
 origins = [
     "https://elearningmanagement.vercel.app",
-    "https://e-learning-management-eight.vercel.app",  # Add your actual Vercel domain
+    "https://e-learning-management-eight.vercel.app",
     "http://localhost:5000",
     "http://127.0.0.1:5000",
-    "*"  # Allow all origins as fallback
+    "*"  # Allow all origins as fallback - will accept your new Vercel domain
 ]
 
 app.add_middleware(
