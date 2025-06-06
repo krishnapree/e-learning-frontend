@@ -59,13 +59,18 @@ Base.metadata.create_all(bind=engine)
 app = FastAPI(title="EduFlow API", version="1.0.0", description="AI-Powered Learning Management System")
 
 # Configure CORS with environment-based origins
-origins = os.getenv("CORS_ORIGINS", "*").split(",")
+origins = [
+    "https://elearningmanagement.vercel.app",
+    "http://localhost:5000",
+    "http://127.0.0.1:5000",
+    "*"  # Allow all origins as fallback
+]
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Allow all origins for now, or specify your Vercel domain
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["*"],
 )
 
@@ -2650,6 +2655,11 @@ async def get_student_quiz_attempts(
 @app.get("/api/health")
 async def health_check():
     return {"status": "healthy", "timestamp": datetime.now(timezone.utc).isoformat()}
+
+@app.options("/{path:path}")
+async def options_handler(path: str):
+    """Handle CORS preflight requests"""
+    return {"message": "OK"}
 
 if __name__ == "__main__":
     # Import and run EduFlow seed data
