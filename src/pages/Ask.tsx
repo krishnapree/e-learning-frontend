@@ -17,13 +17,13 @@ const Ask: React.FC = () => {
   const [response, setResponse] = useState<AIResponse | null>(null);
   const [loading, setLoading] = useState(false);
   const [inputMode, setInputMode] = useState<"text" | "voice" | "pdf">("text");
-  const [pdfFile, setPdfFile] = useState<File | null>(null);
-  const [pdfSummary, setPdfSummary] = useState<string>("");
-  const [chatSessionId, setChatSessionId] = useState<number | null>(null);
-  const [chatHistory, setChatHistory] = useState<
-    Array<{ type: "user" | "ai"; content: string }>
-  >([]);
-  const [uploadingPdf, setUploadingPdf] = useState(false);
+  // const [pdfFile, setPdfFile] = useState<File | null>(null);
+  // const [pdfSummary, setPdfSummary] = useState<string>("");
+  // const [chatSessionId, setChatSessionId] = useState<number | null>(null);
+  // const [chatHistory, setChatHistory] = useState<
+  //   Array<{ type: "user" | "ai"; content: string }>
+  // >([]);
+  // const [uploadingPdf, setUploadingPdf] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -55,71 +55,71 @@ const Ask: React.FC = () => {
     setInputMode("text");
   };
 
-  const handlePdfUpload = async (file: File) => {
-    setUploadingPdf(true);
-    try {
-      const formData = new FormData();
-      formData.append("file", file);
+  // const handlePdfUpload = async (file: File) => {
+  //   setUploadingPdf(true);
+  //   try {
+  //     const formData = new FormData();
+  //     formData.append("file", file);
 
-      const res = await fetch("/api/upload-pdf", {
-        method: "POST",
-        credentials: "include",
-        body: formData,
-      });
+  //     const res = await fetch("/api/upload-pdf", {
+  //       method: "POST",
+  //       credentials: "include",
+  //       body: formData,
+  //     });
 
-      if (!res.ok) throw new Error("Failed to upload PDF");
+  //     if (!res.ok) throw new Error("Failed to upload PDF");
 
-      const data = await res.json();
-      setPdfFile(file);
-      setPdfSummary(data.summary);
-      setChatSessionId(data.chat_session_id);
-      setChatHistory([
-        {
-          type: "ai",
-          content: `I've analyzed your PDF "${data.filename}". Here's a summary:\n\n${data.summary}`,
-        },
-      ]);
-      alert("PDF uploaded and analyzed successfully!");
-    } catch (error) {
-      console.error("Error uploading PDF:", error);
-      alert("Failed to upload PDF. Please try again.");
-    } finally {
-      setUploadingPdf(false);
-    }
-  };
+  //     const data = await res.json();
+  //     setPdfFile(file);
+  //     setPdfSummary(data.summary);
+  //     setChatSessionId(data.chat_session_id);
+  //     setChatHistory([
+  //       {
+  //         type: "ai",
+  //         content: `I've analyzed your PDF "${data.filename}". Here's a summary:\n\n${data.summary}`,
+  //       },
+  //     ]);
+  //     alert("PDF uploaded and analyzed successfully!");
+  //   } catch (error) {
+  //     console.error("Error uploading PDF:", error);
+  //     alert("Failed to upload PDF. Please try again.");
+  //   } finally {
+  //     setUploadingPdf(false);
+  //   }
+  // };
 
-  const handlePdfChat = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!question.trim() || !chatSessionId) return;
+  // const handlePdfChat = async (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!question.trim() || !chatSessionId) return;
 
-    setLoading(true);
-    try {
-      const res = await fetch("/api/chat-pdf", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify({
-          chat_session_id: chatSessionId,
-          message: question,
-        }),
-      });
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch("/api/chat-pdf", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       credentials: "include",
+  //       body: JSON.stringify({
+  //         chat_session_id: chatSessionId,
+  //         message: question,
+  //       }),
+  //     });
 
-      if (!res.ok) throw new Error("Failed to get response");
+  //     if (!res.ok) throw new Error("Failed to get response");
 
-      const data = await res.json();
-      setChatHistory((prev) => [
-        ...prev,
-        { type: "user", content: question },
-        { type: "ai", content: data.response.text },
-      ]);
-      setQuestion("");
-    } catch (error) {
-      console.error("Error:", error);
-      alert("Failed to get AI response. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+  //     const data = await res.json();
+  //     setChatHistory((prev) => [
+  //       ...prev,
+  //       { type: "user", content: question },
+  //       { type: "ai", content: data.response.text },
+  //     ]);
+  //     setQuestion("");
+  //   } catch (error) {
+  //     console.error("Error:", error);
+  //     alert("Failed to get AI response. Please try again.");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const formatAIResponse = (text: string): string => {
     let formatted = text
@@ -127,27 +127,27 @@ const Ask: React.FC = () => {
       .replace(/\*(.*?)\*/g, "<em>$1</em>")
       .replace(
         /^(\d+)\.\s+(.+)$/gm,
-        '<div class="mb-2"><span class="font-semibold text-blue-600">$1.</span> $2</div>'
+        '<div class="mb-2"><span class="font-semibold text-blue-600">$1.</span> $2</div>',
       )
       .replace(
         /^[-*]\s+(.+)$/gm,
-        '<div class="mb-2 ml-4"><span class="text-blue-600 mr-2">•</span>$1</div>'
+        '<div class="mb-2 ml-4"><span class="text-blue-600 mr-2">•</span>$1</div>',
       )
       .replace(
         /^###\s+(.+)$/gm,
-        '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">$1</h3>'
+        '<h3 class="text-lg font-semibold text-gray-900 mt-6 mb-3">$1</h3>',
       )
       .replace(
         /^##\s+(.+)$/gm,
-        '<h2 class="text-xl font-bold text-gray-900 mt-6 mb-4">$1</h2>'
+        '<h2 class="text-xl font-bold text-gray-900 mt-6 mb-4">$1</h2>',
       )
       .replace(
         /```(\w+)?\n([\s\S]*?)```/g,
-        '<pre class="bg-gray-100 p-4 rounded-lg mt-4 mb-4 overflow-x-auto"><code class="text-sm">$2</code></pre>'
+        '<pre class="bg-gray-100 p-4 rounded-lg mt-4 mb-4 overflow-x-auto"><code class="text-sm">$2</code></pre>',
       )
       .replace(
         /`([^`]+)`/g,
-        '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>'
+        '<code class="bg-gray-100 px-2 py-1 rounded text-sm font-mono">$1</code>',
       )
       .replace(/\n\n/g, '</p><p class="mb-4">')
       .replace(/^/, '<p class="mb-4">')
@@ -197,8 +197,8 @@ const Ask: React.FC = () => {
                 mode === "text"
                   ? "fa-keyboard"
                   : mode === "voice"
-                  ? "fa-microphone"
-                  : "fa-file-pdf"
+                    ? "fa-microphone"
+                    : "fa-file-pdf"
               } mr-2`}
             />
             {mode.charAt(0).toUpperCase() + mode.slice(1)}
@@ -244,9 +244,7 @@ const Ask: React.FC = () => {
       )}
 
       {inputMode === "pdf" && (
-        <div>
-          {/* You can add the PDF upload + chat component here */}
-        </div>
+        <div>{/* You can add the PDF upload + chat component here */}</div>
       )}
 
       {/* AI Response Display */}
