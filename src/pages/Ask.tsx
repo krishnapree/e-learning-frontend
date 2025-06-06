@@ -244,8 +244,7 @@ const Ask: React.FC = () => {
 
       {inputMode === "pdf" && (
         <div>
-          {/* You already have the full PDF input, chat, and quiz logic */}
-          {/* You can keep that section below this */}
+          {/* Add your PDF input + chat logic here if needed */}
         </div>
       )}
 
