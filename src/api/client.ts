@@ -1,8 +1,8 @@
 // Grab the VITE_API_URL that Vite injects at build time
-const API_BASE = import.meta.env.VITE_API_URL as string;
+const API_BASE = (import.meta as any).env.VITE_API_URL as string;
 
 if (!API_BASE) {
-  throw new Error('VITE_API_URL is not defined. Make sure you set it in .env');
+  throw new Error("VITE_API_URL is not defined. Make sure you set it in .env");
 }
 
 // Append /api to the base URL since your endpoints expect it
@@ -159,18 +159,18 @@ class APIClient {
   async getQuizWithParams(difficulty?: string, chatSessionId?: number) {
     let url = "/quiz";
     const params = new URLSearchParams();
-    
+
     if (chatSessionId) {
       params.append("chat_session_id", chatSessionId.toString());
     }
     if (difficulty) {
       params.append("difficulty", difficulty);
     }
-    
+
     if (params.toString()) {
       url += "?" + params.toString();
     }
-    
+
     return this.request(url);
   }
 
