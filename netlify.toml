@@ -20,7 +20,7 @@
 
 # Environment variables (you can also set these in Netlify dashboard)
 [context.production.environment]
-  VITE_API_URL = "https://e-learning-1-5tmf.onrender.com"
+  VITE_API_URL = "https://e-learning-backend-9w2z.onrender.com"
 
 [context.deploy-preview.environment]
-  VITE_API_URL = "https://e-learning-1-5tmf.onrender.com"
+  VITE_API_URL = "https://e-learning-backend-9w2z.onrender.com"
