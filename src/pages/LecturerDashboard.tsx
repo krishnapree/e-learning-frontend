@@ -56,6 +56,22 @@ const LecturerDashboard: React.FC = () => {
       setDashboardData(data);
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);
+      // Set fallback data to prevent repeated API calls
+      setDashboardData({
+        current_semester: {
+          id: 0,
+          name: "Current Semester",
+          year: new Date().getFullYear(),
+        },
+        courses: [],
+        course_statistics: {
+          total_courses: 0,
+          total_students: 0,
+          total_assignments: 0,
+          average_class_size: 0,
+        },
+        pending_submissions: [],
+      });
     } finally {
       setLoading(false);
     }

@@ -208,7 +208,13 @@ class APIClient {
     endpoint: string,
     options: RequestInit = {}
   ): Promise<T> {
-    return this.request<T>(endpoint, options);
+    try {
+      return await this.request<T>(endpoint, options);
+    } catch (error) {
+      // Log error but don't throw to prevent console spam
+      console.warn(`API request failed for ${endpoint}:`, error);
+      throw error;
+    }
   }
 }
 

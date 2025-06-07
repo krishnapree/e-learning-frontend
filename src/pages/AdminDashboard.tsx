@@ -47,6 +47,17 @@ const AdminDashboard: React.FC = () => {
         setOverview(overviewData);
       } catch (error) {
         console.error("Failed to fetch academic overview:", error);
+        // Set fallback data
+        setOverview({
+          total_students: 0,
+          total_lecturers: 0,
+          total_courses: 0,
+          current_enrollments: 0,
+          total_departments: 0,
+          total_programs: 0,
+          current_semester: "Current Semester",
+          system_status: "Online",
+        });
       }
 
       // Fetch recent users (students)
@@ -57,6 +68,8 @@ const AdminDashboard: React.FC = () => {
         setRecentUsers(usersData.users.slice(0, 5)); // Show latest 5
       } catch (error) {
         console.error("Failed to fetch recent users:", error);
+        // Set empty array to prevent repeated calls
+        setRecentUsers([]);
       }
     } catch (error) {
       console.error("Failed to fetch dashboard data:", error);

@@ -44,6 +44,16 @@ const Dashboard: React.FC = () => {
       setData(dashboardData);
     } catch (error) {
       console.error("Error loading dashboard:", error);
+      // Set fallback data to prevent repeated API calls
+      setData({
+        overall_score: 0,
+        total_questions: 0,
+        correct_answers: 0,
+        streak: 0,
+        recent_activity: [],
+        topic_performance: [],
+        achievements: [],
+      });
     } finally {
       setLoading(false);
     }
