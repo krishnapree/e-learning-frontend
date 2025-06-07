@@ -32,11 +32,28 @@ class APIClient {
       const response = await fetch(url, config);
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({
-          message: `HTTP error ${response.status}`,
-        }));
+        let errorData;
+        const contentType = response.headers.get("content-type");
 
-        console.error(`API Error Response:`, {
+        try {
+          if (contentType && contentType.includes("application/json")) {
+            errorData = await response.json();
+          } else {
+            const text = await response.text();
+            // Check if it's an HTML error page
+            if (text.includes("<!DOCTYPE") || text.includes("<html>")) {
+              errorData = {
+                message: `Backend endpoint not available: ${endpoint}`,
+              };
+            } else {
+              errorData = { message: text || `HTTP error ${response.status}` };
+            }
+          }
+        } catch {
+          errorData = { message: `HTTP error ${response.status}` };
+        }
+
+        console.warn(`API Error Response:`, {
           status: response.status,
           statusText: response.statusText,
           url: url,
@@ -55,11 +72,19 @@ class APIClient {
         throw error;
       }
 
+      // Check if response is JSON before parsing
+      const contentType = response.headers.get("content-type");
+      if (!contentType || !contentType.includes("application/json")) {
+        const text = await response.text();
+        console.warn(`Non-JSON response from ${endpoint}:`, text);
+        throw new Error(`Expected JSON response but got: ${contentType}`);
+      }
+
       return response.json();
     } catch (error) {
-      console.error(`API request failed: ${endpoint}`, {
+      console.warn(`API request failed: ${endpoint}`, {
         url,
-        error,
+        error: error instanceof Error ? error.message : error,
         API_BASE,
         API_ENDPOINT,
       });
