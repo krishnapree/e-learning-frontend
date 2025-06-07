@@ -2,7 +2,7 @@
 
 import React, { useState } from "react";
 import VoiceRecorder from "../components/VoiceRecorder";
-import { apiClient } from "../api/client";
+// import { apiClient } from "../api/client"; // Temporarily disabled - backend AI not implemented
 
 interface AIResponse {
   text: string;
@@ -32,21 +32,17 @@ const Ask: React.FC = () => {
 
     setLoading(true);
     try {
-      // Debug: Log the API URL being used
-      console.log("API Base URL:", import.meta.env.VITE_API_URL);
+      // Temporary: Show demo response since backend AI is not implemented
+      await new Promise((resolve) => setTimeout(resolve, 1000)); // Simulate API delay
 
-      const data = await apiClient.askQuestion(question);
-      setResponse(data as AIResponse);
+      setResponse({
+        text: `Thank you for your question: "${question}"\n\nThe AI Tutor feature is currently under development. The backend AI endpoints are not yet implemented.\n\nFor now, you can:\n• Browse available courses\n• Take quizzes\n• View your dashboard\n• Access learning materials\n\nThe AI functionality will be available once the backend is updated with AI capabilities.`,
+        hasChart: false,
+        hasCode: false,
+      });
     } catch (error) {
       console.error("Error details:", error);
-      console.error("API URL:", import.meta.env.VITE_API_URL);
-
-      // More detailed error message
-      const errorMessage =
-        error instanceof Error ? error.message : "Unknown error";
-      alert(
-        `Failed to get AI response: ${errorMessage}. Check console for details.`
-      );
+      alert("AI Tutor is currently unavailable. Please try other features.");
     } finally {
       setLoading(false);
     }
